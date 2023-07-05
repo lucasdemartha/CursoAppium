@@ -1,72 +1,55 @@
 package br.lucasdemartha.cursoappium;
 
 import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.concurrent.TimeUnit;
 
+import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
-import org.openqa.selenium.remote.DesiredCapabilities;
 
-import io.appium.java_client.MobileBy;
-import io.appium.java_client.MobileElement;
-import io.appium.java_client.android.AndroidDriver;
-import io.appium.java_client.remote.MobileCapabilityType;
+import br.lucasdemartha.cursoappium.core.DSL;
+import br.lucasdemartha.cursoappium.core.DriverFactory;
 
 public class DesafioFormularioTeste {
-    private AndroidDriver<MobileElement> inicializarAppium() throws MalformedURLException {
-        DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
-        desiredCapabilities.setCapability("platformName", "Android");
-        desiredCapabilities.setCapability("appium:deviceName", "emulator");
-        desiredCapabilities.setCapability("appium:automationName", "uiautomator2");
-        desiredCapabilities.setCapability(MobileCapabilityType.APP, "E:\\CursoAppium\\CursoAppium\\Workspace_VSCode\\Testes\\appium\\src\\resources\\CTAppium_2_0.apk");
 
-        AndroidDriver<MobileElement> driver = new AndroidDriver(new URL("http://127.0.0.1:4723/wd/hub"), desiredCapabilities);
-        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-        return driver;
+    private DSL dsl = new DSL();
+
+    @Before
+    public void inicializarAppium() throws MalformedURLException {
+        //selecionar formulario
+        dsl.clicarPorTexto("Formulário");
     }
 
+    @After //executa depois de cada teste
+    public void takeDown() {
+        DriverFactory.killDriver();
+    }
     @Test
-    public void devePreencherCamposDesafio() throws MalformedURLException{
-        AndroidDriver<MobileElement> driver = inicializarAppium();
-        
-        //selecionar o formulario
-        driver.findElement(By.xpath("//*[@text='Formulário']")).click(); // * = qualquer elemento
+    public void deveRealizarCadastro() throws MalformedURLException{
 
-        //preencher o formulario
-        MobileElement campoNome = driver.findElement(MobileBy.AccessibilityId("nome"));
-        campoNome.sendKeys("Lucas");
+        //preencher campos
+        dsl.escrever(By.className("android.widget.EditText"), "Lucas");
 
         //clicar no combo
-        driver.findElement(MobileBy.AccessibilityId("console")).click();
-
-        //selecionar o valor
-        driver.findElement(By.xpath("//android.widget.CheckedTextView[@text='PS4']")).click();
+        dsl.selecionarCombo(By.className("android.widget.Spinner"), "PS4");
 
         //selecionar checkbox
-        MobileElement check = driver.findElement(By.className("android.widget.CheckBox")); //fazendo por class
-        MobileElement switchElement = driver.findElement(By.className("android.widget.Switch")); //fazendo por class
-        check.click();
-        switchElement.click();
+        dsl.clicar(By.className("android.widget.CheckBox"));
+        dsl.clicar(By.className("android.widget.Switch"));
 
         //selecionar salvar
-        driver.findElement(By.className("android.widget.Button")).click();
+        dsl.clicarPorTexto("SALVAR");
 
         //validar os campos
-        MobileElement text = driver.findElement(By.xpath("//android.widget.TextView[@text='Nome: Lucas']"));
-        Assert.assertEquals("Nome: Lucas", text.getText());
+        Assert.assertEquals("Nome: Lucas", dsl.obterTexto(By.xpath("//android.widget.TextView[starts-with(@text, 'Nome:')]")));
 
-        MobileElement text2 = driver.findElement(By.xpath("//android.widget.TextView[starts-with(@text, 'Console:')]"));
-        Assert.assertEquals("Console: ps4", text2.getText());
+        Assert.assertEquals("Console: ps4", dsl.obterTexto(By.xpath("//android.widget.TextView[starts-with(@text, 'Console:')]")));
 
-        MobileElement text3 = driver.findElement(By.xpath("//android.widget.TextView[starts-with(@text, 'Checkbox:')]"));
-        Assert.assertTrue(text3.getText().endsWith("Marcado"));
+        Assert.assertTrue(dsl.isCheckMarcado(By.className("android.widget.CheckBox")));
 
-        MobileElement text4 = driver.findElement(By.xpath("//android.widget.TextView[starts-with(@text, 'Switch:')]"));
-        Assert.assertTrue(text4.getText().endsWith("Off"));
+        Assert.assertFalse(dsl.isCheckMarcado(By.className("android.widget.Switch")));
 
-        driver.quit();
     }
 
 }

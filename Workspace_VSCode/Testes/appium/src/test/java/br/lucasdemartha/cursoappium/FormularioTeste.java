@@ -1,43 +1,30 @@
 package br.lucasdemartha.cursoappium;
 
 import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.concurrent.TimeUnit;
 
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.By;
-import org.openqa.selenium.remote.DesiredCapabilities;
 
+import br.lucasdemartha.cursoappium.core.DSL;
+import br.lucasdemartha.cursoappium.core.DriverFactory;
 import io.appium.java_client.MobileBy;
-import io.appium.java_client.MobileElement;
-import io.appium.java_client.android.AndroidDriver;
-import io.appium.java_client.remote.MobileCapabilityType;
 
 public class FormularioTeste {
 
-    public AndroidDriver<MobileElement> driver;
+    private DSL dsl = new DSL();
 
     @Before
     public void inicializarAppium() throws MalformedURLException {
-        DesiredCapabilities desiredCapabilities = new DesiredCapabilities();
-        desiredCapabilities.setCapability("platformName", "Android");
-        desiredCapabilities.setCapability("appium:deviceName", "emulator");
-        desiredCapabilities.setCapability("appium:automationName", "uiautomator2");
-        desiredCapabilities.setCapability(MobileCapabilityType.APP, "E:\\CursoAppium\\CursoAppium\\Workspace_VSCode\\Testes\\appium\\src\\resources\\CTAppium_2_0.apk");
-
-        driver = new AndroidDriver(new URL("http://127.0.0.1:4723/wd/hub"), desiredCapabilities);
-        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-
         //selecionar formulario
-        driver.findElement(By.xpath("//*[@text='Formulário']")).click();
+        dsl.clicarPorTexto("Formulário");
     }
 
     @After //executa depois de cada teste
     public void takeDown() {
-        driver.quit();
+        DriverFactory.killDriver();
     }
     
     /*@Test
@@ -53,13 +40,10 @@ public class FormularioTeste {
     public void devePreencherCampoTexto() throws MalformedURLException{
         
         //escrever nome
-        MobileElement campoNome = driver.findElement(MobileBy.AccessibilityId("nome"));
-        campoNome.sendKeys("Lucas");
+        dsl.escrever(MobileBy.AccessibilityId("nome"), "Lucas");
 
         //checar nome
-
-        String text = campoNome.getText();
-        Assert.assertEquals("Lucas", text);
+        Assert.assertEquals("Lucas", dsl.obterTexto(MobileBy.AccessibilityId("nome")));
 
     }
 
@@ -67,13 +51,10 @@ public class FormularioTeste {
     public void devePreencherCombo() throws MalformedURLException{
         
         //clicar no combo
-        driver.findElement(MobileBy.AccessibilityId("console")).click();
-        
-        //selecionar a opcao desejada
-        driver.findElement(By.xpath("//android.widget.CheckedTextView[@text='Nintendo Switch']")).click();
+        dsl.selecionarCombo(MobileBy.AccessibilityId("console"), "Nintendo Switch");
 
         //verificar a opcao selecionada
-        String text = driver.findElement(By.xpath("//android.widget.Spinner/android.widget.TextView")).getText();
+        String text = dsl.obterTexto(By.xpath("//android.widget.Spinner/android.widget.TextView"));
         Assert.assertEquals("Nintendo Switch", text);
 
     }
@@ -82,20 +63,17 @@ public class FormularioTeste {
     public void deveInteragirSwitchCheckBox() throws MalformedURLException{
 
         //verificar status dos elementos
-        MobileElement check = driver.findElement(By.className("android.widget.CheckBox")); //fazendo por class
-        MobileElement switchElement = driver.findElement(MobileBy.AccessibilityId("switch")); //fazendo por contest-desc
-
         //true ou false (em string)
-        Assert.assertTrue(check.getAttribute("checked").equals("false"));
-        Assert.assertTrue(switchElement.getAttribute("checked").equals("true"));
+        Assert.assertFalse(dsl.isCheckMarcado(By.className("android.widget.CheckBox")));
+        Assert.assertTrue(dsl.isCheckMarcado(MobileBy.AccessibilityId("switch")));
 
         //clicar nos elementos
-        check.click();
-        switchElement.click();
+        dsl.clicar(By.className("android.widget.CheckBox"));
+        dsl.clicar(MobileBy.AccessibilityId("switch"));
 
         //verificar status alterado
-        Assert.assertFalse(check.getAttribute("checked").equals("false"));
-        Assert.assertFalse(switchElement.getAttribute("checked").equals("true"));
+        Assert.assertTrue(dsl.isCheckMarcado(By.className("android.widget.CheckBox")));
+        Assert.assertFalse(dsl.isCheckMarcado(MobileBy.AccessibilityId("switch")));
 
     }
 
