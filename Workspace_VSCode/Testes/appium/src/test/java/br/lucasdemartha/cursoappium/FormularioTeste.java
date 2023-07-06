@@ -2,31 +2,25 @@ package br.lucasdemartha.cursoappium;
 
 import java.net.MalformedURLException;
 
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.By;
 
-import br.lucasdemartha.cursoappium.core.DSL;
-import br.lucasdemartha.cursoappium.core.DriverFactory;
-import io.appium.java_client.MobileBy;
+import br.lucasdemartha.cursoappium.core.BaseTeste;
+import br.lucasdemartha.cursoappium.page.FormularioPage;
+import br.lucasdemartha.cursoappium.page.MenuPage;
 
-public class FormularioTeste {
+public class FormularioTeste extends BaseTeste {
 
-    private DSL dsl = new DSL();
+    private MenuPage menu = new MenuPage();
+    private FormularioPage page = new FormularioPage();
 
     @Before
     public void inicializarAppium() throws MalformedURLException {
         //selecionar formulario
-        dsl.clicarPorTexto("Formulário");
+        menu.acessarFormulario();
     }
 
-    @After //executa depois de cada teste
-    public void takeDown() {
-        DriverFactory.killDriver();
-    }
-    
     /*@Test
     public void deveInstalarAPK() throws MalformedURLException {
 
@@ -40,10 +34,10 @@ public class FormularioTeste {
     public void devePreencherCampoTexto() throws MalformedURLException{
         
         //escrever nome
-        dsl.escrever(MobileBy.AccessibilityId("nome"), "Lucas");
+        page.escreverNome("Lucas");
 
         //checar nome
-        Assert.assertEquals("Lucas", dsl.obterTexto(MobileBy.AccessibilityId("nome")));
+        Assert.assertEquals("Lucas", page.obterNome());
 
     }
 
@@ -51,11 +45,10 @@ public class FormularioTeste {
     public void devePreencherCombo() throws MalformedURLException{
         
         //clicar no combo
-        dsl.selecionarCombo(MobileBy.AccessibilityId("console"), "Nintendo Switch");
+        page.selecionarCombo("Nintendo Switch");
 
         //verificar a opcao selecionada
-        String text = dsl.obterTexto(By.xpath("//android.widget.Spinner/android.widget.TextView"));
-        Assert.assertEquals("Nintendo Switch", text);
+        Assert.assertEquals("Nintendo Switch", page.obterValorCombo());
 
     }
 
@@ -64,17 +57,16 @@ public class FormularioTeste {
 
         //verificar status dos elementos
         //true ou false (em string)
-        Assert.assertFalse(dsl.isCheckMarcado(By.className("android.widget.CheckBox")));
-        Assert.assertTrue(dsl.isCheckMarcado(MobileBy.AccessibilityId("switch")));
+        Assert.assertFalse(page.isCheckMarcado());
+        Assert.assertTrue(page.isSwitchMarcado());
 
         //clicar nos elementos
-        dsl.clicar(By.className("android.widget.CheckBox"));
-        dsl.clicar(MobileBy.AccessibilityId("switch"));
+        page.clicarCheck();
+        page.clicarSwitch();
 
         //verificar status alterado
-        Assert.assertTrue(dsl.isCheckMarcado(By.className("android.widget.CheckBox")));
-        Assert.assertFalse(dsl.isCheckMarcado(MobileBy.AccessibilityId("switch")));
-
+        Assert.assertTrue(page.isCheckMarcado());
+        Assert.assertFalse(page.isSwitchMarcado());
     }
 
 }

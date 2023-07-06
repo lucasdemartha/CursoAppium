@@ -4,8 +4,8 @@ import static br.lucasdemartha.cursoappium.core.DriverFactory.*;
 
 import org.openqa.selenium.By;
 
-public class DSL {
-    
+public class BasePage {
+
     public void escrever(By by, String texto){
         getDriver().findElement(by).sendKeys(texto);
     }
@@ -30,6 +30,5 @@ public class DSL {
     public boolean isCheckMarcado(By by){
         return getDriver().findElement(by).getAttribute("checked").equals("true");
     }
-    
 
 }
