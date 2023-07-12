@@ -36,4 +36,12 @@ public class BaseTeste {
 		}
     }
 
+    public void esperar(long tempo) {
+        try {
+            Thread.sleep(tempo);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

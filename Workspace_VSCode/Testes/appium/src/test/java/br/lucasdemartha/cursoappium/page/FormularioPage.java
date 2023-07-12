@@ -52,6 +52,11 @@ public class FormularioPage extends BasePage {
         clicarPorTexto("SALVAR");
     }
 
+    public void salvarDemorado(){
+        //clicar em salvar
+        clicarPorTexto("SALVAR DEMORADO");
+    }
+
     public String obterNomeCadastrado(){
         //verificar nome cadastrado
         return obterTexto(By.xpath("//android.widget.TextView[starts-with(@text, 'Nome:')]"));
