@@ -9,6 +9,7 @@ import org.junit.Test;
 import br.lucasdemartha.cursoappium.core.BaseTeste;
 import br.lucasdemartha.cursoappium.page.FormularioPage;
 import br.lucasdemartha.cursoappium.page.MenuPage;
+import io.appium.java_client.MobileBy;
 
 public class FormularioTeste extends BaseTeste {
 
@@ -67,6 +68,23 @@ public class FormularioTeste extends BaseTeste {
         //verificar status alterado
         Assert.assertTrue(page.isCheckMarcado());
         Assert.assertFalse(page.isSwitchMarcado());
+    }
+
+    @Test
+    public void deveAlterarData(){
+        page.clicarPorTexto("01/01/2000");
+        page.clicarPorTexto("20");
+        page.clicarPorTexto("OK");
+        Assert.assertTrue(page.existeElementoPorTexto("20/01/2000"));
+    }
+
+    @Test
+    public void deveAlterarHora(){
+        page.clicarPorTexto("12:00");
+        page.clicar(MobileBy.AccessibilityId("10"));
+        page.clicar(MobileBy.AccessibilityId("40"));
+        page.clicarPorTexto("OK");
+        Assert.assertTrue(page.existeElementoPorTexto("10:40"));
     }
 
 }

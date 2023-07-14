@@ -1,6 +1,9 @@
 package br.lucasdemartha.cursoappium;
 
+import java.net.MalformedURLException;
+
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import br.lucasdemartha.cursoappium.core.BaseTeste;
@@ -12,11 +15,14 @@ public class AlertaTeste extends BaseTeste{
     private MenuPage menu = new MenuPage();
     private AlertaPage page = new AlertaPage();
 
+    @Before
+    public void inicializarAppium() throws MalformedURLException {
+        //Acessar menu Alerta
+        menu.acessarAlerta();
+    }
+
     @Test
     public void deveConfirmarAlerta(){
-        //acessar menu alerta
-        menu.acessarAlerta();
-
         //clicar em alerta confirm
         page.clicarAlertaConfirm();
 
@@ -34,6 +40,18 @@ public class AlertaTeste extends BaseTeste{
 
         //sair
         page.sair();
+    }
+
+    @Test
+    public void deveClicarForaAlerta(){
+        //clicar em alerta confirm
+        page.clicarAlertaSimples();
+
+        //clicar fora da caixa
+        page.clicarForaCaixa();
+
+        //verificar que a mensagem nao esta presente
+        Assert.assertFalse(page.existeElementoPorTexto("Pode clicar no OK ou fora da caixa para sair"));
     }
     
 }
