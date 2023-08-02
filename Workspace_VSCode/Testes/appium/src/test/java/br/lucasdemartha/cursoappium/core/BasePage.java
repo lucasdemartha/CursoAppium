@@ -8,6 +8,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Point;
 
+import io.appium.java_client.MobileElement;
 import io.appium.java_client.TouchAction;
 import io.appium.java_client.touch.WaitOptions;
 import io.appium.java_client.touch.offset.PointOption;
@@ -103,6 +104,27 @@ public class BasePage {
 		.press(PointOption.point(new Point(start_x, y)))
 		.waitAction(WaitOptions.waitOptions(Duration.ofMillis(500)))
 		.moveTo(PointOption.point(new Point(end_x, y)))
+		.release()
+		.perform();
+	}
+
+    public void swipeElement(MobileElement element, double inicio, double fim) {
+		int y = element.getLocation().y + (element.getSize().height / 2);
+		
+		int start_x = (int) (element.getSize().width * inicio);
+		int end_x = (int) (element.getSize().width * fim);
+		
+		new TouchAction<>(getDriver())
+		.press(PointOption.point(new Point(start_x, y)))
+		.waitAction(WaitOptions.waitOptions(Duration.ofMillis(500)))
+		.moveTo(PointOption.point(new Point(end_x, y)))
+		.release()
+		.perform();
+	}
+
+    public void cliqueLongo(By by) {
+		new TouchAction<>(getDriver())
+		.longPress(PointOption.point(getDriver().findElement(by).getCenter()))
 		.release()
 		.perform();
 	}
